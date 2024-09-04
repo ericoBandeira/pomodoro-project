@@ -1,4 +1,8 @@
 import { Play } from "phosphor-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as zod from "zod";
+
 import {
   CountDownContainer,
   FormnContainer,
@@ -9,16 +13,42 @@ import {
   TaskInput,
 } from "./styles";
 
+const mewCycleFormValidationSchema = zod.object({
+  task: zod.string().min(1, "Informe a tarefa"),
+  minutesAmount: zod
+    .number()
+    .min(5, "O ciclo precisa ser de no mínimo de 5 minutos.")
+    .max(60, "O ciclo precisa ser de no máximo de 60 minutos."),
+});
+
+type NewCycleFormData = zod.infer<typeof mewCycleFormValidationSchema>;
+
 function Home() {
+  const { register, handleSubmit, watch, reset } = useForm<NewCycleFormData>({
+    resolver: zodResolver(mewCycleFormValidationSchema),
+    defaultValues: {
+      task: "",
+      minutesAmount: 0,
+    },
+  });
+
+  function handleCreateNewCycle(data: NewCycleFormData) {
+    console.log(data);
+    reset();
+  }
+
+  const task = watch("task");
+
   return (
     <HomeContainer>
-      <form action="">
+      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
         <FormnContainer>
           <label htmlFor="task">Vou trabalhar em</label>
           <TaskInput
             id="task"
             list="task-suggestion"
             placeholder="Dê um nome para o seu projeto"
+            {...register("task")}
           />
 
           <datalist id="task-suggestion">
@@ -36,6 +66,7 @@ function Home() {
             step={5}
             min={5}
             max={60}
+            {...(register("minutesAmount"), { valueAsNumber: true })}
           />
 
           <span>minutos.</span>
@@ -49,7 +80,11 @@ function Home() {
           <span>0</span>
         </CountDownContainer>
 
-        <StartCountdownButton disabled type="submit">
+        <StartCountdownButton
+          disabled={!task}
+          type="submit"
+          // onClick={handleSubmit(handleCreateNewCycle)}
+        >
           <Play />
           Começar
         </StartCountdownButton>
