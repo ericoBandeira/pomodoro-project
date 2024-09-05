@@ -41,7 +41,7 @@ function Home() {
 
   return (
     <HomeContainer>
-      <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
+      <form action="" onSubmit={handleSubmit(handleCreateNewCycle)}>
         <FormnContainer>
           <label htmlFor="task">Vou trabalhar em</label>
           <TaskInput
@@ -66,7 +66,7 @@ function Home() {
             step={5}
             min={5}
             max={60}
-            {...(register("minutesAmount"), { valueAsNumber: true })}
+            {...register("minutesAmount", { valueAsNumber: true })}
           />
 
           <span>minutos.</span>
@@ -80,11 +80,7 @@ function Home() {
           <span>0</span>
         </CountDownContainer>
 
-        <StartCountdownButton
-          disabled={!task}
-          type="submit"
-          // onClick={handleSubmit(handleCreateNewCycle)}
-        >
+        <StartCountdownButton disabled={!task} type="submit">
           <Play />
           Começar
         </StartCountdownButton>
